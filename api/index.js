@@ -1,6 +1,6 @@
-export default async function handler(request, response) {
+module.exports = async (request, response) => {
   const TOKEN = "7999219744:AAF_DOZOas83SbFymc7-4K2qrYvJStPGsjc";
-  const URL = "https://vercel.app";
+  const URL = "https://my-business-bot-theta.vercel.app/";
 
   // 1. Если зашли через браузер (GET) — принудительно обновляем вебхук
   if (request.method === 'GET') {
@@ -61,4 +61,4 @@ export default async function handler(request, response) {
   }
 
   return response.status(405).send('Method Not Allowed');
-}
+};
