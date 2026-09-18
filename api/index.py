@@ -5,23 +5,22 @@ import telebot
 TOKEN = "7999219744:AAF_DOZOas83SbFymc7-4K2qrYvJStPGsjc"
 bot = telebot.TeleBot(TOKEN, threaded=False)
 
-# Автоматическая привязка вебхука при старте
+# Автоматически ставим вебхук при старте скрипта
 try:
     webhook_url = "https://vercel.app"
     bot.set_webhook(url=webhook_url)
 except Exception:
     pass
 
-# РЕЖИМ 1: Ответ на обычные сообщения прямо боту в ЛС (на /start или старт)
+# РЕЖИМ 1: Если пишут боту напрямую в ЛС (на /start или старт)
 @bot.message_handler(content_types=['text'])
 def handle_direct_message(message):
-    # Проверяем, что это личные сообщения с ботом
     if message.chat.type == "private":
         user_text = message.text.lower().strip()
         if user_text in ["/start", "старт"]:
             bot.send_message(message.chat.id, "Привет")
 
-# РЕЖИМ 2: Ответ от твоего имени в Telegram Business (на слово "привет")
+# РЕЖИМ 2: Автоответчик в твоем личном ЛС через Telegram Business
 @bot.business_message_handler(content_types=['text'])
 def handle_business_message(message):
     user_text = message.text.lower().strip()
@@ -32,8 +31,16 @@ def handle_business_message(message):
             business_connection_id=message.business_connection_id
         )
 
-# Обработчик запросов от Vercel
+# Главный сервер, который принимает запросы от Vercel
 class handler(BaseHTTPRequestHandler):
+    # Исправлено: теперь сервер НЕ падает при переходе через браузер (GET)
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain; charset=utf-8')
+        self.end_headers()
+        self.wfile.write("Бизнес-бот успешно запущен и работает!".encode('utf-8'))
+
+    # Прием сообщений от Telegram (POST)
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
