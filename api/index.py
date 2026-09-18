@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 import urllib.request
+import urllib.parse
 import json
 
 app = FastAPI()
@@ -30,11 +31,14 @@ def send_tg_message(chat_id, text, business_connection_id=None):
 def read_root():
     status = "Статус:"
     try:
-        set_url = f"https://telegram.org{TOKEN}/setWebhook?url={URL}"
+        # Исправлено: безопасно кодируем токен и ссылку, чтобы urllib не путал двоеточие с портом
+        safe_url = urllib.parse.quote(URL, safe='')
+        set_url = f"https://telegram.org{TOKEN}/setWebhook?url={safe_url}"
+        
         with urllib.request.urlopen(set_url) as response:
             res = json.loads(response.read().decode('utf-8'))
             if res.get("ok"):
-                status += " Вебхук успешно установлен!"
+                status += " Вебхук успешно установлен напрямую!"
             else:
                 status += f" Ошибка ТГ: {res.get('description')}"
     except Exception as e:
@@ -69,3 +73,4 @@ async def telegram_webhook(request: Request):
         print(f"Ошибка обработки: {e}")
         
     return "ok"
+    
