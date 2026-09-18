@@ -2,13 +2,13 @@ import json
 from http.server import BaseHTTPRequestHandler
 import telebot
 
+# Твой токен бота
 TOKEN = "7999219744:AAF_DOZOas83SbFymc7-4K2qrYvJStPGsjc"
 bot = telebot.TeleBot(TOKEN, threaded=False)
 
-# Автоматически ставим вебхук при старте скрипта
+# Код сам автоматически регистрирует себя на серверах Telegram
 try:
-    webhook_url = "https://vercel.app"
-    bot.set_webhook(url=webhook_url)
+    bot.set_webhook(url="https://vercel.app")
 except Exception:
     pass
 
@@ -20,7 +20,7 @@ def handle_direct_message(message):
         if user_text in ["/start", "старт"]:
             bot.send_message(message.chat.id, "Привет")
 
-# РЕЖИМ 2: Автоответчик в твоем личном ЛС через Telegram Business
+# РЕЖИМ 2: Автоответчик в твоем личном ЛС через Telegram Business (на слово "привет")
 @bot.business_message_handler(content_types=['text'])
 def handle_business_message(message):
     user_text = message.text.lower().strip()
@@ -31,9 +31,9 @@ def handle_business_message(message):
             business_connection_id=message.business_connection_id
         )
 
-# Главный сервер, который принимает запросы от Vercel
+# Главный сервер для Vercel
 class handler(BaseHTTPRequestHandler):
-    # Исправлено: теперь сервер НЕ падает при переходе через браузер (GET)
+    # Ответ для проверки в браузере (GET)
     def do_GET(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/plain; charset=utf-8')
