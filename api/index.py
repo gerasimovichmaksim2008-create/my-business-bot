@@ -2,8 +2,16 @@ import json
 from http.server import BaseHTTPRequestHandler
 import telebot
 
-TOKEN = '7999219744:AAF_DOZOas83SbFymc7-4K2qrYvJStPGsjc'
+TOKEN = "7999219744:AAF_DOZOas83SbFymc7-4K2qrYvJStPGsjc"
 bot = telebot.TeleBot(TOKEN, threaded=False)
+
+# Этот кусок кода САМ включит вебхук, как только сервер Vercel запустится
+try:
+    webhook_url = "https://vercel.app"
+    bot.set_webhook(url=webhook_url)
+    print("Вебхук успешно установлен автоматически!")
+except Exception as e:
+    print(f"Ошибка установки вебхука: {e}")
 
 @bot.business_message_handler(content_types=['text'])
 def handle_business_message(message):
@@ -26,4 +34,4 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
         self.wfile.write(b'ok')
-      
+        
