@@ -2,7 +2,7 @@ import json
 from http.server import BaseHTTPRequestHandler
 import telebot
 
-TOKEN = "ТОКЕН_ВАШЕГО_БОТА"
+TOKEN = '7999219744:AAF_DOZOas83SbFymc7-4K2qrYvJStPGsjc'
 bot = telebot.TeleBot(TOKEN, threaded=False)
 
 @bot.business_message_handler(content_types=['text'])
